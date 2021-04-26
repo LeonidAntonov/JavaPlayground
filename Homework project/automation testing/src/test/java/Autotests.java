@@ -15,6 +15,14 @@ public class Autotests {
 
     private static WebDriver driver;
 
+    @Before
+    public void startWebDriver(){
+        WebDriverManager.chromedriver().setup();
+        if (driver == null)
+            driver = new ChromeDriver();
+
+    }
+
     @Test
     public void logChecker() {
         logger.info("Проверяем цвет для инфо");
@@ -25,31 +33,24 @@ public class Autotests {
         logger.debug("Проверяем цвет для дебага");
     }
 
-    @Before
-    public void startWebDriver(){
-        WebDriverManager.chromedriver().setup();
-        if (driver == null)
-            driver = new ChromeDriver();
-
-    }
-
-
-
     @Test
     public void webDriverTestAndAssert() {
         logger.info("Драйвер успешно запущен");
         driver.get("https://otus.ru");
         String expectedTitle = "Онлайн‑курсы для профессионалов, дистанционное обучение современным профессиям";
         String actualTitle = driver.getTitle();
-        Assert.assertEquals(expectedTitle, actualTitle);
         if (expectedTitle.equals(actualTitle)) {
             logger.info("Название сайта = {}" ,driver.getTitle());
         }
         else logger.warn("Не удалось получить информацию о титульной странице");
+        Assert.assertEquals(expectedTitle, actualTitle);
     }
 
     @After
     public void quitWebDriver(){
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+            driver = null;
+        }
     }
 }
